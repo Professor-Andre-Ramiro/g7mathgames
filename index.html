@@ -120,6 +120,17 @@ h2{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,4vw,2.7rem)
 .btn{font:800 .9rem var(--body);border-radius:999px;padding:9px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 .btn-play{background:var(--navy);color:var(--paper);border:2px solid var(--navy)}
 .btn-link{background:transparent;color:var(--navy);border:2px dashed var(--navy)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chips .topic{align-self:auto;margin:0}
+.dev{display:inline-flex;align-items:center;gap:5px;font-size:.78rem;font-weight:800;padding:3px 9px 3px 7px;border-radius:4px;line-height:1.3}
+.dev svg{width:15px;height:15px;flex:0 0 auto}
+.dev-ok{background:#E2F3E6;color:#1F6A3A}
+.dev-keys{background:#FFF0BF;color:#6E4B00}
+.devnote{font-size:.92rem;color:var(--ink-soft);border-left:4px solid #8CCB9C;padding:6px 0 6px 10px}
+.devnote.warn{border-left-color:#E8B400;color:#5C3F00;background:#FFF8DD;border-radius:0 6px 6px 0;padding-right:10px;font-weight:600}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 22px}
+.filters button{font:800 .88rem var(--body);border:2px solid var(--navy);background:var(--paper);color:var(--navy);border-radius:999px;padding:8px 16px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--navy);color:var(--paper)}
 .empty{padding:30px 0;color:var(--ink-soft);font-weight:600}
 
 /* player */
@@ -213,6 +224,11 @@ footer b{font-family:var(--display);font-weight:400;font-size:1.2rem}
           <span class="sr" hidden>Buscar</span>
           <input id="q" type="search" autocomplete="off" data-i18n-ph="search" placeholder="Buscar jogo ou tema…">
         </label>
+      </div>
+      <div class="filters" role="group" aria-label="Filtro">
+        <button type="button" id="f-all" data-dev="all" aria-pressed="true" data-i18n="fAll">Todos</button>
+        <button type="button" id="f-mobile" data-dev="mobile" aria-pressed="false" data-i18n="fMobile">Funcionam no celular</button>
+        <button type="button" id="f-keys" data-dev="keys" aria-pressed="false" data-i18n="fKeys">Precisam de teclado</button>
       </div>
       <div class="grid" id="grid"></div>
       <p class="empty" id="empty" hidden data-i18n="empty">Nenhum jogo encontrado com essa busca.</p>
@@ -348,6 +364,15 @@ const GAMES = [
    "Click the green flag to start and pay attention to what the characters say: they explain everything you need to do.")
 ].map((g,i)=>({...g,n:i+1}));
 
+/* Como cada jogo é controlado (levantado a partir do código de cada projeto no Scratch):
+   touch = só toque/clique · type = digita respostas (no celular abre o teclado da tela) · keys = precisa de teclado físico */
+const KEYS = {6:["Barra de espaço","Space bar"],8:["Letras A a F","Letters A to F"],12:["Setas","Arrow keys"],14:["Setas","Arrow keys"],
+  17:["Barra de espaço","Space bar"],20:["Barra de espaço e Enter","Space bar and Enter"],21:["Barra de espaço","Space bar"],
+  22:["Setas e barra de espaço","Arrow keys and space bar"],24:["W A S D e setas","W A S D and arrow keys"],26:["Teclas A e S","A and S keys"]};
+const TYPE = [2,4,5,7,10,11,13,15,18,19,27];
+GAMES.forEach(g=>{ g.dev = KEYS[g.n] ? "keys" : TYPE.includes(g.n) ? "type" : "touch"; g.keys = KEYS[g.n]||null; });
+let devFilter = "all";
+
 const T = {
   pt:{
     eyebrow:"Design · MYP · G7",
@@ -363,6 +388,11 @@ const T = {
     gamesH:"Os jogos",
     gamesP:"Clique em um jogo para abrir. Dentro do jogo, aperte a bandeira verde para começar.",
     search:"Buscar jogo ou tema…", empty:"Nenhum jogo encontrado com essa busca.",
+    mobileOk:"Funciona no celular", needsKeys:"Precisa de teclado", keysTitle:"Use um computador com teclado",
+    fAll:"Todos", fMobile:"Funcionam no celular", fKeys:"Precisam de teclado",
+    keysNote:"Este jogo precisa de teclado ({k}). Jogue em um computador: no celular e no tablet as teclas não funcionam.",
+    typeNote:"No celular, toque na caixa de resposta para abrir o teclado da tela e digitar.",
+    touchNote:"Funciona com toque no celular e no tablet, e com o mouse no computador.",
     howTo:"Como jogar", flagTip:"Clique na bandeira verde, no canto do jogo, para começar.", madeBy:"Criado por",
     game:"Jogo", play:"Jogar", scratch:"Scratch ↗", by:"por",
     tip:"Dica: use o botão de tela cheia no canto do jogo.", openScratch:"Abrir no Scratch ↗",
@@ -384,6 +414,11 @@ const T = {
     gamesH:"The games",
     gamesP:"Click a game to open it. Inside the game, press the green flag to start.",
     search:"Search game or topic…", empty:"No games match that search.",
+    mobileOk:"Works on phones", needsKeys:"Needs a keyboard", keysTitle:"Use a computer with a keyboard",
+    fAll:"All", fMobile:"Work on phones", fKeys:"Need a keyboard",
+    keysNote:"This game needs a keyboard ({k}). Play it on a computer: the keys don't work on phones or tablets.",
+    typeNote:"On a phone, tap the answer box to open the on-screen keyboard and type.",
+    touchNote:"Works with touch on phones and tablets, and with a mouse on a computer.",
     howTo:"How to play", flagTip:"Click the green flag in the game's corner to start.", madeBy:"Made by",
     game:"Game", play:"Play", scratch:"Scratch ↗", by:"by",
     tip:"Tip: use the full-screen button in the game's corner.", openScratch:"Open in Scratch ↗",
@@ -557,12 +592,22 @@ const grid = $("#grid"), q = $("#q");
 const pad = n=>String(n).padStart(2,"0");
 const titleOf = g => g.title || `${T[lang].game} ${pad(g.n)}`;
 const topicOf = g => lang==="en" ? (g.topicEn||g.topicPt) : (g.topicPt||g.topicEn);
+const ICON_PHONE = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/></svg>';
+const ICON_KEYS = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 10h1M9.5 10h1M13 10h1M16.5 10h1M7 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+function devBadge(g){
+  const t=T[lang];
+  return g.dev==="keys"
+    ? `<span class="dev dev-keys" title="${esc(t.keysTitle)}">${ICON_KEYS}${esc(t.needsKeys)}</span>`
+    : `<span class="dev dev-ok">${ICON_PHONE}${esc(t.mobileOk)}</span>`;
+}
 const howOf = g => lang==="en" ? (g.howEn||g.howPt||"") : (g.howPt||g.howEn||"");
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 function render(){
   const t = T[lang], term = q.value.trim().toLowerCase();
-  const list = GAMES.filter(g=>!term || [titleOf(g),topicOf(g),g.by,pad(g.n)].join(" ").toLowerCase().includes(term));
+  const list = GAMES.filter(g=>(devFilter==="all" || (devFilter==="mobile" ? g.dev!=="keys" : g.dev==="keys"))
+    && (!term || [titleOf(g),topicOf(g),g.by,pad(g.n)].join(" ").toLowerCase().includes(term)));
+  document.querySelectorAll("[data-dev]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.dev===devFilter));
   grid.innerHTML = list.map(g=>`
     <article class="card">
       <button class="thumb" type="button" data-play="${g.n}" aria-label="${esc(t.play)}: ${esc(titleOf(g))}">
@@ -571,7 +616,7 @@ function render(){
         <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3l16 9-16 9z" fill="#182350"/></svg></span>
       </button>
       <div class="meta">
-        ${topicOf(g)?`<span class="topic">${esc(topicOf(g))}</span>`:""}
+        <div class="chips">${devBadge(g)}${topicOf(g)?`<span class="topic">${esc(topicOf(g))}</span>`:""}</div>
         <h3>${esc(titleOf(g))}</h3>
         ${g.by?`<span class="by">${esc(t.by)} ${esc(g.by)}</span>`:""}
         ${howOf(g)?`<p class="how">${esc(howOf(g))}</p>`:""}
@@ -605,8 +650,9 @@ function openGame(n){
   $("#p-link").href = `https://scratch.mit.edu/projects/${g.id}`;
   const t = T[lang];
   $("#p-how").innerHTML = `<h4>${esc(t.howTo)}</h4>
-    ${topicOf(g)?`<span class="topic">${esc(topicOf(g))}</span>`:""}
+    <div class="chips">${devBadge(g)}${topicOf(g)?`<span class="topic">${esc(topicOf(g))}</span>`:""}</div>
     <p>${esc(howOf(g))}</p>
+    <p class="devnote ${g.dev==="keys"?"warn":""}">${esc(g.dev==="keys" ? t.keysNote.replace("{k}", (k=>/^W /.test(k)?k:k[0].toLowerCase()+k.slice(1))(g.keys[lang==="en"?1:0])) : g.dev==="type" ? t.typeNote : t.touchNote)}</p>
     <div class="flag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5" fill="#4CBF4A" stroke="#2E7D32" stroke-width="1.6" stroke-linejoin="round"/></svg><span>${esc(t.flagTip)}</span></div>
     ${g.by?`<p class="by" style="margin-top:12px">${esc(t.madeBy)} <b>${esc(g.by)}</b> · Scratch</p>`:""}`;
   $("#p-frame").innerHTML = `<iframe src="https://scratch.mit.edu/projects/${g.id}/embed" title="${esc(titleOf(g))}" allowtransparency="true" allowfullscreen scrolling="no"></iframe>`;
@@ -622,6 +668,7 @@ player.addEventListener("click", e=>{ if(e.target===player) closeGame(); });
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !player.hidden) closeGame(); });
 document.querySelectorAll(".lang button").forEach(b=>b.addEventListener("click",()=>applyLang(b.dataset.lang)));
 q.addEventListener("input", render);
+document.querySelectorAll("[data-dev]").forEach(b=>b.addEventListener("click",()=>{ devFilter=b.dataset.dev; render(); }));
 $("#stage").addEventListener("click", e=>{ const b=e.target.closest("[data-stage]"); if(b){ activeStage=+b.dataset.stage; drawCycle(); renderStage(); } });
 
 $("#count").textContent = GAMES.length;
