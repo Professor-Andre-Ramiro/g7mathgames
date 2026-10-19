@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G7 Math Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Hanken+Grotesk:ital,wght@0,400;0,600;0,800;1,800&display=swap">
+<style>
+/* Layout: starry coral frame (like the slides) around white panels; dashed "blueprint" lines with dot ends as connectors. */
+:root{
+  --coral:#D35B48;
+  --coral-deep:#B9473A;
+  --star:#E58A7A;
+  --navy:#182350;
+  --paper:#FFFFFF;
+  --sun:#FFD43B;
+  --ink-soft:#4A5378;
+  --display:"Bagel Fat One","Arial Black",Impact,sans-serif;
+  --body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:var(--body);color:var(--navy);font-size:17px;line-height:1.55;
+  background-color:var(--coral);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23E58A7A' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 8v14M11 12l14 6M11 18l14-6'/%3E%3Cpath d='M54 44v14M47 48l14 6M47 54l14-6'/%3E%3C/g%3E%3C/svg%3E");
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:18px}
+.brand{font-family:var(--display);color:var(--paper);font-size:1.5rem;letter-spacing:.01em;text-decoration:none}
+.brand span{color:var(--navy)}
+.lang{display:flex;background:var(--coral-deep);border-radius:999px;padding:4px;gap:2px}
+.lang button{font:800 .85rem/1 var(--body);letter-spacing:.08em;border:0;border-radius:999px;padding:9px 14px;cursor:pointer;background:transparent;color:var(--paper)}
+.lang button[aria-pressed="true"]{background:var(--paper);color:var(--navy)}
+
+/* hero */
+.hero{position:relative;padding-block:28px 64px;color:var(--paper)}
+.eyebrow{font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:.8rem;display:flex;align-items:center;gap:12px}
+.eyebrow::after{content:"";flex:0 0 90px;border-top:2px dashed currentColor}
+.eyebrow::before{content:"";width:10px;height:10px;border-radius:50%;background:currentColor}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(2.8rem,8.5vw,6.6rem);line-height:.95;margin:18px 0 22px;text-wrap:balance;text-shadow:0 10px 30px rgba(120,30,20,.35)}
+h1 em{font-family:var(--body);font-style:italic;font-weight:800;color:var(--navy);text-shadow:none;letter-spacing:-.02em}
+.lede{max-width:60ch;font-size:1.15rem;margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;padding:0;list-style:none}
+.tags li{border:2px dashed rgba(255,255,255,.8);border-radius:999px;padding:6px 14px;font-weight:600;font-size:.9rem}
+.tags li b{font-family:var(--display);font-weight:400;color:var(--sun);margin-right:4px}
+.deco{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:20px;width:min(34vw,330px);pointer-events:none}
+@media (max-width:760px){.deco{display:none}}
+
+/* panels = the white slide card */
+.panel{background:var(--paper);border-radius:6px;padding-block:44px;margin-bottom:40px;box-shadow:0 18px 40px rgba(110,30,20,.25)}
+.panel .inner{padding-left:clamp(18px,4vw,48px);padding-right:clamp(18px,4vw,48px)}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,4vw,2.7rem);line-height:1.05;margin:0 0 10px;text-wrap:balance}
+/* guiding question */
+.label{font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;color:var(--coral-deep);display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.label::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}
+.question{margin:0;max-width:62ch}
+.question p{margin:0 0 .5em;font-size:clamp(1.15rem,2.2vw,1.45rem);line-height:1.4;font-weight:600}
+.question p.ask{font-weight:800;font-size:clamp(1.4rem,3vw,2rem);line-height:1.2;text-wrap:balance}
+.question p.ask mark{background:linear-gradient(transparent 58%,var(--sun) 58%);color:inherit;padding:0 .1em}
+.orig{margin:14px 0 0;font-size:.92rem;color:var(--ink-soft);font-style:italic;max-width:70ch}
+.divider{border:0;border-top:2px dashed #E6C9C2;margin:40px 0}
+
+/* design cycle */
+.cycle{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:center}
+.cycle>*{min-width:0}
+.cycle-head p{margin:0 0 6px;color:var(--ink-soft);max-width:60ch}
+.wheel{width:100%;max-width:540px;margin:0 auto;display:block;overflow:visible}
+.wheel .q{cursor:pointer;transition:opacity .2s ease,transform .2s ease;transform-origin:0 0}
+.wheel .q:focus{outline:none}
+.wheel .q:focus-visible .qshape{stroke:var(--navy);stroke-width:5}
+.wheel.has-active .q:not(.on){opacity:.42}
+.wheel .q.on{transform:scale(1.025)}
+.wheel .q:hover{opacity:1}
+.wheel text{pointer-events:none}
+.stage{border-radius:8px;padding:24px clamp(18px,3vw,28px);background:#FBF3F1;border-top:8px solid var(--stage,#4FB8DA)}
+.stage-top{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.badge{flex:0 0 auto;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:1.6rem;background:var(--stage);color:var(--navy)}
+.stage h3{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.05}
+.stage .crit{display:block;font-size:.8rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
+.stage>p{margin:0 0 16px;color:var(--ink-soft)}
+.strands{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.strands li{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start}
+.strands li span.k{font:800 .8rem/30px var(--body);text-align:center;border-radius:50%;width:30px;height:30px;border:2px dashed var(--navy);font-variant-numeric:tabular-nums}
+.strands b{display:block;line-height:1.3}
+.strands small{display:block;font-size:.95rem;color:var(--ink-soft);line-height:1.45;margin-top:2px}
+.stage-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.stage-nav button{font:800 .85rem var(--body);border:2px solid var(--navy);background:var(--paper);color:var(--navy);border-radius:999px;padding:7px 14px;cursor:pointer}
+.stage-nav button[aria-pressed="true"]{background:var(--navy);color:var(--paper)}
+@media (max-width:860px){.cycle{grid-template-columns:1fr}}
+
+/* games */
+.games-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:26px}
+.games-head p{margin:0;color:var(--ink-soft);max-width:52ch}
+.search{position:relative;flex:0 1 300px;min-width:0}
+.search input{width:100%;font:600 1rem var(--body);color:var(--navy);padding:12px 16px;border:2px dashed var(--navy);border-radius:999px;background:var(--paper)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.card{display:flex;flex-direction:column;border:2px solid var(--navy);border-radius:6px;overflow:hidden;background:var(--paper);transition:transform .18s ease,box-shadow .18s ease}
+.card:hover{transform:translateY(-4px);box-shadow:6px 8px 0 var(--coral)}
+.thumb{position:relative;aspect-ratio:4/3;background:#F3E3DF;border:0;padding:0;cursor:pointer;width:100%;display:block}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb .play{position:absolute;inset:auto 12px 12px auto;width:54px;height:54px;border-radius:50%;background:var(--sun);display:grid;place-items:center;box-shadow:0 4px 0 var(--navy)}
+.thumb .play svg{width:22px;height:22px;margin-left:4px}
+.num{position:absolute;top:10px;left:10px;font-family:var(--display);font-size:.95rem;background:var(--navy);color:var(--paper);padding:4px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
+.meta{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.meta h3{margin:0;font-size:1.08rem;font-weight:800;line-height:1.25;overflow-wrap:anywhere}
+.meta .by{font-size:.88rem;color:var(--ink-soft)}
+.meta .topic{align-self:flex-start;font-size:.78rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#FCE6E1;color:var(--coral-deep);padding:3px 9px;border-radius:4px}
+.actions{display:flex;gap:10px;margin-top:auto;padding-top:10px}
+.btn{font:800 .9rem var(--body);border-radius:999px;padding:9px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-play{background:var(--navy);color:var(--paper);border:2px solid var(--navy)}
+.btn-link{background:transparent;color:var(--navy);border:2px dashed var(--navy)}
+.empty{padding:30px 0;color:var(--ink-soft);font-weight:600}
+
+/* player */
+.player{position:fixed;inset:0;z-index:50;background:rgba(24,35,80,.86);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.meta .how{margin:2px 0 0;font-size:.9rem;color:var(--ink-soft);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.player-body{display:grid;grid-template-columns:minmax(0,1fr) 300px;background:var(--paper)}
+.howto{padding:18px 20px;border-left:2px dashed #E6C9C2;overflow:auto;max-height:calc(100vh - 170px)}
+.howto h4{margin:0 0 4px;font-family:var(--display);font-weight:400;font-size:1.35rem}
+.howto .topic{display:inline-block;font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#FCE6E1;color:var(--coral-deep);padding:3px 9px;border-radius:4px;margin:6px 0 10px}
+.howto p{margin:0 0 12px;line-height:1.55}
+.howto .by{font-size:.88rem;color:var(--ink-soft)}
+.howto .flag{display:flex;gap:10px;align-items:flex-start;background:#FBF3F1;border-radius:6px;padding:10px 12px;font-size:.88rem;color:var(--ink-soft)}
+.howto .flag svg{flex:0 0 auto;width:20px;height:20px;margin-top:1px}
+@media (max-width:820px){.player-body{grid-template-columns:1fr}.howto{border-left:0;border-top:2px dashed #E6C9C2;max-height:none}.player{overflow:auto;align-items:start}}
+.player-box{width:min(100%,1180px);background:var(--paper);border-radius:8px;overflow:hidden;border:6px solid var(--coral)}
+.player-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:var(--paper)}
+.player-top h3{margin:0;font-size:1.1rem;font-weight:800;min-width:0;overflow-wrap:anywhere}
+.close{border:0;background:var(--navy);color:var(--paper);width:40px;height:40px;border-radius:50%;font-size:1.4rem;cursor:pointer;flex:0 0 auto}
+.frame{aspect-ratio:485/402;max-height:calc(100vh - 170px);width:100%;margin:0 auto;background:#000}
+.frame iframe{width:100%;height:100%;border:0;display:block}
+.player-foot{padding:10px 16px 14px;font-size:.9rem;color:var(--ink-soft);display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:space-between}
+
+footer{color:var(--paper);padding-block:10px 40px;font-size:.92rem;display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between}
+footer b{font-family:var(--display);font-weight:400;font-size:1.2rem}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="wrap bar">
+  <a class="brand" href="#top">G7 <span>Math</span> Games</a>
+  <div class="lang" role="group" aria-label="Idioma / Language">
+    <button id="lang-pt" type="button" data-lang="pt" aria-pressed="true">PT</button>
+    <button id="lang-en" type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<section class="wrap hero" id="top">
+  <svg class="deco" viewBox="0 0 330 260" aria-hidden="true" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round">
+    <path d="M20 40H150V120" stroke-dasharray="8 8"/>
+    <circle cx="20" cy="40" r="8" fill="#fff" stroke="none"/>
+    <rect x="190" y="20" width="110" height="110" rx="4" stroke-dasharray="8 8"/>
+    <text x="245" y="98" fill="#fff" stroke="none" font-family="Bagel Fat One, Arial Black" font-size="56" text-anchor="middle">π</text>
+    <path d="M150 160H300" stroke-dasharray="8 8"/>
+    <circle cx="300" cy="160" r="8" fill="#fff" stroke="none"/>
+    <g transform="translate(40 150)"><rect width="80" height="80" rx="10" fill="#FFD43B" stroke="none"/><text x="40" y="58" fill="#182350" stroke="none" font-family="Bagel Fat One, Arial Black" font-size="48" text-anchor="middle">÷</text></g>
+    <circle cx="180" cy="215" r="7" fill="#fff" stroke="none"/><circle cx="205" cy="215" r="7" fill="#fff" stroke="none"/><circle cx="230" cy="215" r="7" fill="#fff" stroke="none"/>
+    <path d="M250 245L320 205V245Z" fill="#fff" stroke="none"/>
+  </svg>
+  <div class="eyebrow" data-i18n="eyebrow">Design · MYP · G7</div>
+  <h1 data-i18n-html="h1">Jogos que <em>ensinam</em> Matemática</h1>
+  <p class="lede" data-i18n="lede">Os alunos do G7 projetaram e programaram seus próprios jogos no Scratch. Cada jogo foi criado para ensinar um tema de matemática de um jeito divertido. Escolha um jogo abaixo e jogue direto aqui no site.</p>
+  <ul class="tags">
+    <li><b id="count">32</b> <span data-i18n="tagGames">jogos</span></li>
+    <li data-i18n="tagScratch">Programados em Scratch</li>
+    <li data-i18n="tagMath">Um tema de matemática por jogo</li>
+  </ul>
+</section>
+
+<main class="wrap">
+  <section class="panel" aria-labelledby="about-h">
+    <div class="inner">
+      <p class="label" id="about-h" data-i18n="qLabel">Pergunta norteadora</p>
+      <blockquote class="question" id="question"></blockquote>
+      <p class="orig" id="orig" hidden></p>
+
+      <hr class="divider">
+
+      <div class="cycle">
+        <div>
+          <div class="cycle-head">
+            <h2 data-i18n="cycleH">O ciclo de design</h2>
+            <p data-i18n="cycleP">Para responder à pergunta, cada aluno passou pelas quatro etapas do ciclo de design do IB. Clique em uma etapa da roda para ver o que a turma fez.</p>
+          </div>
+          <svg class="wheel" id="wheel" viewBox="-270 -270 540 540" role="group" aria-label="Ciclo de design"></svg>
+        </div>
+        <div class="stage" id="stage" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="games" aria-labelledby="games-h">
+    <div class="inner">
+      <div class="games-head">
+        <div>
+          <h2 id="games-h" data-i18n="gamesH">Os jogos</h2>
+          <p data-i18n="gamesP">Clique em um jogo para abrir. Dentro do jogo, aperte a bandeira verde para começar.</p>
+        </div>
+        <label class="search">
+          <span class="sr" hidden>Buscar</span>
+          <input id="q" type="search" autocomplete="off" data-i18n-ph="search" placeholder="Buscar jogo ou tema…">
+        </label>
+      </div>
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="empty" hidden data-i18n="empty">Nenhum jogo encontrado com essa busca.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div><b>G7 Math Games</b><br><span data-i18n="foot1">Projeto de Design · Programa dos Anos Intermediários (MYP) do IB</span></div>
+  <div data-i18n="foot2">Jogos criados pelos alunos com Scratch, do MIT Media Lab.</div>
+</footer>
+
+<div class="player" id="player" hidden role="dialog" aria-modal="true" aria-labelledby="p-title">
+  <div class="player-box">
+    <div class="player-top">
+      <h3 id="p-title">—</h3>
+      <button class="close" id="p-close" type="button" aria-label="Fechar">×</button>
+    </div>
+    <div class="player-body">
+      <div class="frame" id="p-frame"></div>
+      <aside class="howto" id="p-how"></aside>
+    </div>
+    <div class="player-foot">
+      <span data-i18n="tip">Dica: use o botão de tela cheia no canto do jogo.</span>
+      <a id="p-link" href="#" target="_blank" rel="noopener" data-i18n="openScratch">Abrir no Scratch ↗</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== LISTA DE JOGOS =====
+   Para completar ou corrigir: preencha title / topicPt / topicEn / by.
+   Campos vazios são preenchidos automaticamente com o nome do projeto no Scratch (quando disponível). */
+const OPS = ["Operações","Operations"], FR = ["Frações","Fractions"], MU = ["Múltiplos","Multiples"],
+      PR = ["Números primos","Prime numbers"], IN = ["Números inteiros","Integers"], CP = ["Plano cartesiano","Cartesian plane"];
+const G = (id,title,by,topic,howPt,howEn)=>({id,title,by,topicPt:topic?topic[0]:"",topicEn:topic?topic[1]:"",howPt,howEn});
+const GAMES = [
+ G("1375713646","Rocket Game","obrooo",OPS,
+   "Exploda todas as pedras! Faça a conta e atire na pedra que tem o resultado correto.",
+   "Blow up all the rocks! Work out the calculation and shoot the rock with the correct result."),
+ G("1365531449","Diamond Math Clicker","fredericolosbyos",OPS,
+   "Leia as instruções na tela e resolva as contas. Cada resposta certa vale um clique no diamante.",
+   "Read the on-screen instructions and solve the calculations. Each correct answer earns you one click on the diamond."),
+ G("1365253510","The Crazy Balloons","araolindomaravilhoso",["Potências","Exponents"],
+   "Clique no balão com a resposta certa da potência. Acertou: ganha 1 ponto e vai para a próxima pergunta. Errou: perde 1 ponto e continua no mesmo nível.",
+   "Click the balloon with the correct answer to the exponent question. Right: +1 point and a new question. Wrong: −1 point and you stay on the same level."),
+ G("1365253051","Meteor","nikita1818",["Potências e raízes","Powers and roots"],
+   "Um meteoro está caindo em direção a uma menina. Digite a resposta certa da pergunta de potência ou raiz antes que ele chegue. Acertou: o meteoro é desviado e você ganha 1 ponto. Errou: fim de jogo. Salve a menina três vezes seguidas para vencer.",
+   "A meteor is falling toward a girl. Type the correct answer to the power or root question before it lands. Right: the meteor is deflected and you score. Wrong: game over. Save her three times in a row to win."),
+ G("1369892197","CC (Cool Car)","h_u_t_r_i_x",OPS,
+   "Aparece uma conta com +, −, × ou ÷. Resposta certa faz o carro verde andar; resposta errada faz o carro roxo andar. Leve o carro verde até o fim primeiro.",
+   "A problem with +, −, × or ÷ appears. A correct answer moves the green car; a wrong one moves the purple car. Get the green car to the end first."),
+ G("1393236281","Don't Touch the Rocks! Integers","TE-EBY",IN,
+   "Use a barra de espaço para pular, pegar maçãs e desviar das pedras. Cada maçã vale pontos; maçãs com contas valem o resultado da conta. Evite as maçãs que dariam pontos negativos!",
+   "Press the space bar to jump, collect apples and dodge the rocks. Apples are worth points; apples with calculations are worth the result. Avoid the apples that would give you negative points!"),
+ G("1369886327","Taco Clicker Math","Losbyos",OPS,
+   "Clique no taco para ganhar pontos. Cada clique traz uma conta para resolver; respostas certas dão pontos, que você troca por melhorias que produzem mais tacos por segundo.",
+   "Click the taco to earn points. Each click brings a math problem; correct answers give points that you spend on upgrades that make more tacos per second."),
+ G("1365256437","Climb-o-saurus","norquinha",IN,
+   "Aperte as teclas em ordem alfabética para levar o dinossauro a cada galho da árvore. Cada galho tem uma conta com números inteiros, cada vez mais difícil. Errou? Aperte a mesma letra e tente de novo. Dica: use a regra de sinais!",
+   "Press the keys in alphabetical order to move the dinosaur up each branch. Every branch has an integer problem that gets harder. Wrong answer? Press the same letter to retry. Tip: remember the sign rules!"),
+ G("1389560530","Basketball Clicker","TE-EBY",FR,
+   "Clique o mais rápido que puder para juntar o máximo de bolas de basquete. Clique na bola que mostra a fração pedida para ganhar mais bolas.",
+   "Click as fast as you can to collect as many basketballs as possible. Click the ball showing the requested fraction to earn more."),
+ G("1365253918","Prime Lesson 4","HuntrixSCT",PR,
+   "São 8 rodadas. Em cada uma, três números primos aparecem em vermelho e somem. Digite os três em ordem crescente, sem vírgulas. Acerte todas para terminar com 8 pontos.",
+   "There are 8 rounds. In each one, three prime numbers flash in red and disappear. Type them in ascending order, without commas. Get them all right to finish with 8 points."),
+ G("1365542137","Car Race","124hotdog-",OPS,
+   "Clique na bandeira verde e responda às contas que aparecem. Resposta certa faz o seu carro andar; resposta errada faz o outro carro andar. Quem cruzar a linha de chegada primeiro vence.",
+   "Click the green flag and answer the problems that appear. A correct answer moves your car; a wrong one moves the other car. First across the finish line wins."),
+ G("1379422505","Snake Game","arielecandi",OPS,
+   "Coma as maçãs que correspondem à conta mostrada no alto da tela. Cada maçã certa faz a cobra crescer e dá pontos.",
+   "Eat the apples that match the calculation shown at the top of the screen. Each correct apple makes the snake longer and earns points."),
+ G("1382279583","Cristiano vs Messi","DavidMansur2",OPS,
+   "Clique na bandeira verde e digite a resposta das contas. Acertou: o Messi anda. Errou: o Cristiano Ronaldo anda. Quem chegar primeiro à linha de chegada vence.",
+   "Click the green flag and type the answers to the problems. Right: Messi moves. Wrong: Cristiano Ronaldo moves. Whoever reaches the finish line first wins."),
+ G("1377701367","The School","18Guigui18",OPS,
+   "Você é um aluno na escola. Entre nas aulas e resolva problemas de matemática: acerto vale +1 ponto, erro vale −1. Responda rápido, porque o jogo acaba se o professor te pegar!",
+   "You're a student at school. Go into the classes and solve math problems: +1 point for a right answer, −1 for a wrong one. Be quick, because the game ends if the teacher catches you!"),
+ G("1379421992","Aprenda Expressões","carregadorportatio",["Expressões numéricas","Numerical expressions"],
+   "Clique na bandeira verde no canto superior esquerdo. Quando o professor pedir, digite seu nome no campo branco e resolva as expressões. No final, digite OK na barra branca para ver sua pontuação.",
+   "Click the green flag in the top-left corner. When the teacher asks, type your name in the white box and solve the expressions. At the end, type OK in the white bar to see your score."),
+ G("1365542705","Treasure Hunt","Dudu180913",null,
+   "Encontre 3 tesouros em 3 rodadas. Na rodada final, acerte 3 ataques para derrotar o dragão. Ataques errados custam vidas.",
+   "Find 3 treasures over 3 rounds. In the final round, land 3 successful attacks to defeat the dragon. Failed attacks cost lives."),
+ G("1366735358","The Mysterious Desert","lulu1818875",PR,
+   "Aperte a barra de espaço várias vezes para proteger o Ben de ser devorado pelo unicórnio. Se o unicórnio pegar o Ben, você precisa responder se um número é primo ou não.",
+   "Keep pressing the space bar to protect Ben from being eaten by the unicorn. If the unicorn gets him, you have to answer whether a number is prime."),
+ G("1389551156","Complete All the Stairs!","TE-EBY",FR,
+   "Resolva todos os problemas de frações para salvar a Abby de ir para a sala do Martino e levar uma suspensão. Cada erro revela uma letra da palavra WARNING; se a palavra ficar completa, você perde.",
+   "Solve every fraction problem to save Abby from being sent to Martino's office and suspended. Each wrong answer reveals a letter of the word WARNING; spell the whole word and you lose."),
+ G("1365546677","Multiples","Yodinhaaaaa",MU,
+   "Clique na bandeira verde para ver a primeira conta. Digite (ou fale) a resposta: acerto vale +10 pontos, erro vale −10. Para outro jogador, clique na bandeira de novo e os pontos voltam a zero.",
+   "Click the green flag to see the first question. Type (or say) your answer: +10 points if right, −10 if wrong. For the next player, click the flag again to reset the score."),
+ G("1380524769","Multiplication Exercises","cold-tomato",["Multiplicação","Multiplication"],
+   "Aperte a barra de espaço para receber a pergunta, digite a resposta e aperte Enter. Acerto faz o seu carro azul andar; erro faz o carro vermelho andar. Chegue primeiro à linha de chegada.",
+   "Press the space bar for a question, type your answer and press Enter. A correct answer moves your blue car; a wrong one moves the red car. Reach the finish line first."),
+ G("1365539685","Race of Teachers","chel261113",null,
+   "Aperte a barra de espaço para começar. Responda à pergunta: você só avança com a resposta certa. Depois de acertar, aperte espaço de novo para continuar. Se o jogo travar após um erro, clique na bandeira verde para recomeçar.",
+   "Press the space bar to start. Answer the question: you only move forward with the right answer. After a correct answer, press space again to continue. If the game freezes after a wrong answer, click the green flag to restart."),
+ G("1365541651","Labirintite","buscarga",null,
+   "Atravesse o labirinto sem tocar nas áreas pretas (paredes e portas), senão o gato volta ao início. Use as setas para mover o gato e a barra de espaço para mudar a direção. Ao tocar numa porta, responda à pergunta: acertou, a porta abre.",
+   "Get through the maze without touching the black areas (walls and doors), or the cat goes back to the start. Use the arrow keys to move and the space bar to change direction. Touch a door to get a question; answer correctly and it opens."),
+ G("1377645117","Multistones","Lelepups",MU,
+   "Clique na pedra cujo número é múltiplo do número no círculo preto do centro. A cada acerto o número do centro muda. Limpe todas as pedras antes que alguma encoste no círculo, senão você recomeça. Exige reflexos rápidos!",
+   "Click the stone whose number is a multiple of the number in the black circle. Each correct click changes the centre number. Clear all the stones before one touches the circle, or you start over. Quick reflexes needed!"),
+ G("1367034473","Witch x Queen Cartesian Plane","Lilux18",CP,
+   "Jogo para duas pessoas. Clique na bandeira verde: o gato diz um ponto do plano cartesiano. O jogador 1 usa W, A, S, D e o jogador 2 usa as setas. Quem chegar primeiro ao ponto ganha 1 ponto; vence quem fizer 2 pontos.",
+   "A two-player game. Click the green flag: the cat calls out a point on the Cartesian plane. Player 1 uses W, A, S, D and player 2 uses the arrow keys. First to reach the point scores; first to 2 points wins."),
+ G("1365505584","Divi Drop","67zabo",["Divisibilidade","Divisibility"],
+   "Ligue números que são divisíveis entre si (por exemplo, 4 e 2) em até 2 minutos. Você vence se sobrar apenas um número sem ligação. Para tentar de novo, clique na bandeira verde. O jogo tem música; abaixe o volume se preferir.",
+   "Connect numbers that divide into each other (for example, 4 and 2) within 2 minutes. You win if only one number is left unconnected. Click the green flag to try again. The game has music; turn the volume down if you like."),
+ G("1365506136","Cartesian Plane","saboasceluffy",CP,
+   "Aperte A para posicionar a bola amarela e S para posicionar a bola verde. Depois, responda às perguntas: as coordenadas X e Y da bola amarela e, em seguida, as da bola verde.",
+   "Press A to place the yellow ball and S to place the green ball. Then answer the questions: the X and Y coordinates of the yellow ball, then those of the green ball."),
+ G("1375679203","LMC Taco Clicker","leooks",OPS,
+   "Clique no taco (com o mouse ou o dedo) para ganhar tacos e gaste em melhorias. Fique atento às perguntas: as do alface e do tomate dão 5 segundos para responder; as do queijo, 10 segundos.",
+   "Click the taco (with the mouse or your finger) to earn tacos and spend them on upgrades. Watch for the questions: lettuce and tomato give you 5 seconds to answer, cheese gives you 10."),
+ G("1365506395","Genio Quiz of Fractions","steinbruh",FR,
+   "Escolha uma das quatro opções em cada pergunta. Luz verde: resposta certa, e você avança. Luz laranja: resposta errada, tente de novo.",
+   "Pick one of the four options for each question. Green light: correct, and you move on. Orange light: wrong, try again."),
+ G("1379889538","Fraction Rock","macarrao6789",["Frações equivalentes","Equivalent fractions"],
+   "Há cinco pedras com frações; a do meio é a fração-alvo. Clique na pedra com a fração equivalente à do meio. Se errar, a pedra some e você tenta de novo. Se acertar, os números mudam e você sobe de nível.",
+   "Five rocks show fractions; the middle one is the target. Click the rock with the fraction equivalent to the middle one. Wrong rocks disappear so you can try again. Get it right and the numbers change: next level!"),
+ G("1377647386","Futmat","piksgoat",OPS,
+   "Clique na seta para andar com o personagem. Fique embaixo da bola que mostra o resultado correto para passar de fase. Se encostar numa bola com o resultado errado, volta ao início.",
+   "Click the arrow to move the player forward. Stand under the ball showing the correct result to clear the level. Touch a ball with a wrong result and you go back to the start."),
+ G("1365513358","The Funniest Divisors Game Ever","Nanaomi1000",["Divisores","Divisors"],
+   "Clique na bandeira verde, leia o que o cachorro diz e resolva a conta. Resposta certa leva ao próximo nível; se errar, você precisa clicar na opção correta para seguir. Jogue até a mensagem final.",
+   "Click the green flag, read what the dog says and solve the problem. A correct answer takes you to the next level; if you get it wrong, click the correct option to continue. Play until the final message."),
+ G("1367036641","Top Bake Bakery","Noodle_180",null,
+   "Clique na bandeira verde para começar e preste atenção no que os personagens dizem: eles explicam tudo o que você precisa fazer.",
+   "Click the green flag to start and pay attention to what the characters say: they explain everything you need to do.")
+].map((g,i)=>({...g,n:i+1}));
+
+const T = {
+  pt:{
+    eyebrow:"Design · MYP · G7",
+    h1:"Jogos que <em>ensinam</em> Matemática",
+    lede:"Os alunos do G7 projetaram e programaram seus próprios jogos no Scratch. Cada jogo foi criado para ensinar um tema de matemática de um jeito divertido. Escolha um jogo abaixo e jogue direto aqui no site.",
+    tagGames:"jogos", tagScratch:"Programados em Scratch", tagMath:"Um tema de matemática por jogo",
+    qLabel:"Pergunta norteadora",
+    question:["Muitas pessoas acreditam que jogos são apenas entretenimento, mas, na verdade, eles ensinam habilidades e conhecimentos valiosos. Porém, a maioria dos jogadores não percebe o que está aprendendo.","Como podemos ajudar outras pessoas a <mark>reconhecer o valor educacional</mark> dos jogos?"],
+    orig:"Original: “Many people believe that games are just entertainment, but in reality, they teach valuable skills and knowledge. However, most players don’t realize what they are learning. How can we help others recognize the educational value of games?”",
+    cycleH:"O ciclo de design",
+    cycleP:"Para responder à pergunta, cada aluno passou pelas quatro etapas do ciclo de design do IB. Clique em uma etapa da roda para ver o que a turma fez.",
+    cycleAria:"Ciclo de design", crit:"Critério",
+    gamesH:"Os jogos",
+    gamesP:"Clique em um jogo para abrir. Dentro do jogo, aperte a bandeira verde para começar.",
+    search:"Buscar jogo ou tema…", empty:"Nenhum jogo encontrado com essa busca.",
+    howTo:"Como jogar", flagTip:"Clique na bandeira verde, no canto do jogo, para começar.", madeBy:"Criado por",
+    game:"Jogo", play:"Jogar", scratch:"Scratch ↗", by:"por",
+    tip:"Dica: use o botão de tela cheia no canto do jogo.", openScratch:"Abrir no Scratch ↗",
+    close:"Fechar",
+    foot1:"Projeto de Design · Programa dos Anos Intermediários (MYP) do IB",
+    foot2:"Jogos criados pelos alunos com Scratch, do MIT Media Lab."
+  },
+  en:{
+    eyebrow:"Design · MYP · G7",
+    h1:"Games that <em>teach</em> Math",
+    lede:"G7 students designed and coded their own games in Scratch. Each game was built to teach a math topic in a fun way. Pick a game below and play it right here on the site.",
+    tagGames:"games", tagScratch:"Coded in Scratch", tagMath:"One math topic per game",
+    qLabel:"Guiding question",
+    question:["Many people believe that games are just entertainment, but in reality, they teach valuable skills and knowledge. However, most players don’t realize what they are learning.","How can we help others <mark>recognize the educational value</mark> of games?"],
+    orig:"",
+    cycleH:"The design cycle",
+    cycleP:"To answer the question, every student worked through the four stages of the IB design cycle. Click a stage on the wheel to see what the class did.",
+    cycleAria:"Design cycle", crit:"Criterion",
+    gamesH:"The games",
+    gamesP:"Click a game to open it. Inside the game, press the green flag to start.",
+    search:"Search game or topic…", empty:"No games match that search.",
+    howTo:"How to play", flagTip:"Click the green flag in the game's corner to start.", madeBy:"Made by",
+    game:"Game", play:"Play", scratch:"Scratch ↗", by:"by",
+    tip:"Tip: use the full-screen button in the game's corner.", openScratch:"Open in Scratch ↗",
+    close:"Close",
+    foot1:"Design project · IB Middle Years Programme (MYP)",
+    foot2:"Games made by students with Scratch, from the MIT Media Lab."
+  }
+};
+
+/* ===== CICLO DE DESIGN (IB MYP) =====
+   ring: texto curto da roda (cada item do array = uma linha). Etapa A segue a atividade
+   "Research and Inquiry Framework"; ajuste B, C e D conforme o que a turma fez. */
+const CYCLE = [
+ {key:"A", color:"#56BEE0", a0:-135,
+  pt:{name:["Investigar","e analisar"], title:"Investigar e analisar",
+      intro:"Antes de criar, cada aluno investigou por que vale a pena aprender matemática jogando e estudou jogos que já existem.",
+      strands:[
+       [["Explicar e","justificar","a necessidade"],"Explicar e justificar a necessidade","Por que aprender matemática é importante e como um jogo pode ajudar o jogador a desenvolver suas habilidades matemáticas."],
+       [["Identificar e","priorizar","a pesquisa"],"Identificar e priorizar a pesquisa","Planejar a pesquisa: o que era preciso descobrir para criar um jogo que ensina um tema específico, e em que ordem."],
+       [["Analisar","produtos","existentes"],"Analisar produtos existentes","Analisar pelo menos três jogos parecidos: mecânicas, ações do jogador, estrutura (fases, pontuação, feedback) e experiência do usuário."],
+       [["Desenvolver","um design","brief"],"Desenvolver um design brief","Escolher o tema de matemática e explicá-lo com as próprias palavras, como se fosse ensinar alguém que não conhece o assunto."]]},
+  en:{name:["Inquiring","and analysing"], title:"Inquiring and analysing",
+      intro:"Before creating anything, each student investigated why learning math through play matters and studied games that already exist.",
+      strands:[
+       [["Explain","and justify","the need"],"Explain and justify the need","Why learning math matters and how a game can help a player develop their math skills."],
+       [["Identify and","prioritise","the research"],"Identify and prioritise the research","Plan the research: what they needed to find out to build a game that teaches a specific topic, and in what order."],
+       [["Analyse","existing","products"],"Analyse existing products","Analyse at least three similar games: mechanics, player actions, structure (levels, scoring, feedback) and user experience."],
+       [["Develop","a design","brief"],"Develop a design brief","Choose the math topic and explain it in their own words, as if teaching someone who has never seen it."]]}},
+ {key:"B", color:"#F3C613", a0:-45,
+  pt:{name:["Desenvolver","ideias"], title:"Desenvolver ideias",
+      intro:"Com a pesquisa em mãos, a turma transformou o tema de matemática em ideias de jogo.",
+      strands:[
+       [["Desenvolver","ideias de","design"],"Desenvolver ideias de design","Esboçar várias ideias: personagens, cenários e como a matemática aparece na jogabilidade."],
+       [["Desenvolver","a especifi-","cação"],"Desenvolver a especificação","Listar os requisitos do jogo: o que ele precisa ensinar, para quem, e como o jogador recebe feedback."],
+       [["Apresentar","o design","escolhido"],"Apresentar o design escolhido","Escolher a melhor ideia e justificar a escolha com base na especificação."],
+       [["Desenhos e","diagramas de","planejamento"],"Desenhos e diagramas de planejamento","Desenhar telas, fluxogramas e o mapa das fases antes de programar."]]},
+  en:{name:["Developing","ideas"], title:"Developing ideas",
+      intro:"With their research done, the class turned the math topic into game ideas.",
+      strands:[
+       [["Develop","design","ideas"],"Develop design ideas","Sketch several ideas: characters, settings and how the math shows up in the gameplay."],
+       [["Develop","a design","specification"],"Develop a design specification","List the game's requirements: what it must teach, who it is for and how the player gets feedback."],
+       [["Present","the chosen","design"],"Present the chosen design","Pick the strongest idea and justify the choice against the specification."],
+       [["Planning","drawings/","diagrams"],"Develop planning drawings","Draw screens, flowcharts and a level map before coding."]]}},
+ {key:"C", color:"#7CC243", a0:45,
+  pt:{name:["Criar a","solução"], title:"Criar a solução",
+      intro:"Hora de programar: cada jogo foi construído em blocos no Scratch.",
+      strands:[
+       [["Construir","um plano","lógico"],"Construir um plano lógico","Organizar a produção passo a passo, com o tempo e os recursos de cada etapa."],
+       [["Demonstrar","habilidades","técnicas"],"Demonstrar habilidades técnicas","Programar no Scratch com variáveis, condicionais, repetições, mensagens entre atores, sons e animações."],
+       [["Seguir o","plano para","criar"],"Seguir o plano para criar","Construir o jogo seguindo o plano e os desenhos de planejamento."],
+       [["Justificar","mudanças","no design"],"Justificar mudanças no design","Registrar e explicar as mudanças feitas durante a criação."]]},
+  en:{name:["Creating the","solution"], title:"Creating the solution",
+      intro:"Time to code: every game was built with blocks in Scratch.",
+      strands:[
+       [["Construct","a logical","plan"],"Construct a logical plan","Organise production step by step, with time and resources for each stage."],
+       [["Demonstrate","technical","skills"],"Demonstrate technical skills","Code in Scratch using variables, conditionals, loops, broadcasts between sprites, sounds and animation."],
+       [["Follow the","plan to","create"],"Follow the plan to create the solution","Build the game following the plan and the planning drawings."],
+       [["Justify","changes to","the design"],"Justify changes made to the design","Record and explain the changes made while building."]]}},
+ {key:"D", color:"#EC5562", a0:135,
+  pt:{name:["Avaliar"], title:"Avaliar",
+      intro:"Por fim, os jogos foram testados para saber se os jogadores realmente aprendem e percebem que estão aprendendo.",
+      strands:[
+       [["Criar","métodos","de teste"],"Criar métodos de teste","Planejar testes com colegas: observação, questionários e checagem de cada requisito."],
+       [["Avaliar o","sucesso da","solução"],"Avaliar o sucesso da solução","Comparar o jogo com a especificação a partir dos resultados dos testes."],
+       [["Explicar","como","melhorar"],"Explicar como melhorar","Propor melhorias para uma próxima versão com base no feedback."],
+       [["Explicar","o impacto","da solução"],"Explicar o impacto da solução","Mostrar como o jogo ajuda o jogador a reconhecer a matemática que está aprendendo, respondendo à pergunta norteadora."]]},
+  en:{name:["Evaluating"], title:"Evaluating",
+      intro:"Finally, the games were tested to find out whether players really learn, and notice that they are learning.",
+      strands:[
+       [["Design","testing","methods"],"Design testing methods","Plan tests with classmates: observation, questionnaires and a check of each requirement."],
+       [["Evaluate","the success","of the solution"],"Evaluate the success of the solution","Compare the game against the specification using the test results."],
+       [["Explain how","it could be","improved"],"Explain how the solution could be improved","Propose improvements for a next version based on feedback."],
+       [["Explain","the impact","of the solution"],"Explain the impact of the solution","Show how the game helps players recognize the math they are learning, answering the guiding question."]]}}
+];
+let activeStage = 0;
+
+const NS = "http://www.w3.org/2000/svg";
+const rad = d=>d*Math.PI/180;
+const pt = (r,a)=>[r*Math.cos(rad(a)), r*Math.sin(rad(a))];
+function sector(r0,r1,a0,a1){
+  const [x0,y0]=pt(r1,a0),[x1,y1]=pt(r1,a1),[x2,y2]=pt(r0,a1),[x3,y3]=pt(r0,a0);
+  const big = (a1-a0)>180?1:0;
+  return r0===0 ? `M0 0L${x0} ${y0}A${r1} ${r1} 0 ${big} 1 ${x1} ${y1}Z`
+    : `M${x0} ${y0}A${r1} ${r1} 0 ${big} 1 ${x1} ${y1}L${x2} ${y2}A${r0} ${r0} 0 ${big} 0 ${x3} ${y3}Z`;
+}
+function svgText(lines,x,y,size,opts={}){
+  const lh = size*(opts.lh||1.12);
+  const t = document.createElementNS(NS,"text");
+  t.setAttribute("x",x); t.setAttribute("text-anchor","middle");
+  t.setAttribute("font-size",size); t.setAttribute("fill",opts.fill||"#182350");
+  t.setAttribute("font-family",opts.family||"Hanken Grotesk, system-ui, sans-serif");
+  if(opts.weight) t.setAttribute("font-weight",opts.weight);
+  lines.forEach((ln,i)=>{
+    const s=document.createElementNS(NS,"tspan");
+    s.setAttribute("x",x); s.setAttribute("y",y+(i-(lines.length-1)/2)*lh+size*.35);
+    if(i===0 && opts.boldFirst) s.setAttribute("font-weight","800");
+    s.textContent=ln; t.appendChild(s);
+  });
+  return t;
+}
+function drawCycle(){
+  const svg = $("#wheel"); svg.innerHTML = "";
+  svg.setAttribute("aria-label", T[lang].cycleAria);
+  svg.classList.add("has-active");
+  CYCLE.forEach((st,i)=>{
+    const d = st[lang], g = document.createElementNS(NS,"g");
+    g.setAttribute("class","q"+(i===activeStage?" on":""));
+    g.setAttribute("tabindex","0"); g.setAttribute("role","button");
+    g.setAttribute("aria-pressed", i===activeStage);
+    g.setAttribute("aria-label", `${st.key}: ${d.title}`);
+    // outer strands
+    d.strands.forEach((s,j)=>{
+      const a0 = st.a0 + j*22.5, a1 = a0+22.5, mid=(a0+a1)/2;
+      const p = document.createElementNS(NS,"path");
+      p.setAttribute("d",sector(172,262,a0,a1)); p.setAttribute("fill",st.color);
+      p.setAttribute("stroke","#fff"); p.setAttribute("stroke-width","3");
+      g.appendChild(p);
+      const [tx,ty]=pt(217,mid);
+      g.appendChild(svgText(s[0],tx,ty,10.5,{boldFirst:true,lh:1.15}));
+    });
+    // inner quadrant
+    const q = document.createElementNS(NS,"path");
+    q.setAttribute("d",sector(0,164,st.a0,st.a0+90)); q.setAttribute("fill",st.color);
+    q.setAttribute("stroke","#fff"); q.setAttribute("stroke-width","4"); q.setAttribute("class","qshape");
+    g.appendChild(q);
+    const [lx,ly]=pt(102,st.a0+45);
+    g.appendChild(svgText(d.name,lx,ly,16.5,{family:"Bagel Fat One, Arial Black, sans-serif",lh:1.08}));
+    const kx=lx, ky=ly-(d.name.length*16.5*1.08)/2-17;
+    const kc=document.createElementNS(NS,"circle"); kc.setAttribute("cx",kx); kc.setAttribute("cy",ky); kc.setAttribute("r",12); kc.setAttribute("fill","#182350");
+    g.appendChild(kc);
+    g.appendChild(svgText([st.key],kx,ky,13,{fill:"#fff",weight:"800"}));
+    const pick=()=>{activeStage=i; drawCycle(); renderStage();};
+    g.addEventListener("click",pick);
+    g.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){e.preventDefault();pick();} });
+    svg.appendChild(g);
+  });
+  // two-way arrows between stages (as in the IB wheel)
+  [-135,-45,45,135].forEach(a=>{
+    const [x,y]=pt(168,a), g=document.createElementNS(NS,"g");
+    g.setAttribute("transform",`translate(${x} ${y}) rotate(${a+90})`);
+    g.innerHTML='<path d="M-22 0H22M-22 0l9-8M-22 0l9 8M22 0l-9-8M22 0l-9 8" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"/>';
+    svg.appendChild(g);
+  });
+  // centre
+  const c=document.createElementNS(NS,"g");
+  c.innerHTML='<circle r="30" fill="#fff"/><path d="M0-18V18M-18 0H18M0-18l-6 6M0-18l6 6M0 18l-6-6M0 18l6-6M-18 0l6-6M-18 0l6 6M18 0l-6-6M18 0l-6 6" stroke="#182350" stroke-width="3.5" stroke-linecap="round" fill="none"/>';
+  svg.appendChild(c);
+}
+function renderStage(){
+  const st = CYCLE[activeStage], d = st[lang], box = $("#stage");
+  box.style.setProperty("--stage", st.color);
+  box.innerHTML = `
+    <div class="stage-top"><span class="badge">${st.key}</span>
+      <div><h3>${esc(d.title)}</h3><span class="crit">${esc(T[lang].crit)} ${st.key}</span></div></div>
+    <p>${esc(d.intro)}</p>
+    <ul class="strands">${d.strands.map((s,j)=>`<li><span class="k">${j+1}</span><div><b>${esc(s[1])}</b><small>${esc(s[2])}</small></div></li>`).join("")}</ul>
+    <div class="stage-nav" role="group">${CYCLE.map((c,i)=>`<button type="button" data-stage="${i}" aria-pressed="${i===activeStage}">${c.key} · ${esc(c[lang].title)}</button>`).join("")}</div>`;
+}
+function renderQuestion(){
+  const t=T[lang];
+  $("#question").innerHTML = `<p>${esc(t.question[0])}</p><p class="ask">${t.question[1]}</p>`;
+  $("#orig").textContent = t.orig; $("#orig").hidden = !t.orig;
+}
+
+let lang = "pt";
+try{ const s = localStorage.getItem("g7lang"); if(s==="en"||s==="pt") lang = s; }catch(e){}
+if(location.hash==="#en") lang="en"; if(location.hash==="#pt") lang="pt";
+
+const $ = s=>document.querySelector(s);
+const grid = $("#grid"), q = $("#q");
+const pad = n=>String(n).padStart(2,"0");
+const titleOf = g => g.title || `${T[lang].game} ${pad(g.n)}`;
+const topicOf = g => lang==="en" ? (g.topicEn||g.topicPt) : (g.topicPt||g.topicEn);
+const howOf = g => lang==="en" ? (g.howEn||g.howPt||"") : (g.howPt||g.howEn||"");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function render(){
+  const t = T[lang], term = q.value.trim().toLowerCase();
+  const list = GAMES.filter(g=>!term || [titleOf(g),topicOf(g),g.by,pad(g.n)].join(" ").toLowerCase().includes(term));
+  grid.innerHTML = list.map(g=>`
+    <article class="card">
+      <button class="thumb" type="button" data-play="${g.n}" aria-label="${esc(t.play)}: ${esc(titleOf(g))}">
+        <img loading="lazy" src="https://uploads.scratch.mit.edu/get_image/project/${g.id}_480x360.png" alt="" width="480" height="360">
+        <span class="num">${esc(t.game)} ${pad(g.n)}</span>
+        <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3l16 9-16 9z" fill="#182350"/></svg></span>
+      </button>
+      <div class="meta">
+        ${topicOf(g)?`<span class="topic">${esc(topicOf(g))}</span>`:""}
+        <h3>${esc(titleOf(g))}</h3>
+        ${g.by?`<span class="by">${esc(t.by)} ${esc(g.by)}</span>`:""}
+        ${howOf(g)?`<p class="how">${esc(howOf(g))}</p>`:""}
+        <div class="actions">
+          <button class="btn btn-play" type="button" data-play="${g.n}">▶ ${esc(t.play)}</button>
+          <a class="btn btn-link" href="https://scratch.mit.edu/projects/${g.id}" target="_blank" rel="noopener">${esc(t.scratch)}</a>
+        </div>
+      </div>
+    </article>`).join("");
+  $("#empty").hidden = list.length>0;
+}
+
+function applyLang(l){
+  lang = l; const t = T[l];
+  document.documentElement.lang = l==="en" ? "en" : "pt-BR";
+  document.querySelectorAll("[data-i18n]").forEach(el=>{ el.textContent = t[el.dataset.i18n]; });
+  document.querySelectorAll("[data-i18n-html]").forEach(el=>{ el.innerHTML = t[el.dataset.i18nHtml]; });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{ el.placeholder = t[el.dataset.i18nPh]; });
+  document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.lang===l));
+  $("#p-close").setAttribute("aria-label", t.close);
+  try{ localStorage.setItem("g7lang", l); }catch(e){}
+  renderQuestion(); drawCycle(); renderStage();
+  render();
+}
+
+/* player */
+const player = $("#player"); let lastFocus = null;
+function openGame(n){
+  const g = GAMES[n-1]; lastFocus = document.activeElement;
+  $("#p-title").textContent = `${pad(g.n)} · ${titleOf(g)}`;
+  $("#p-link").href = `https://scratch.mit.edu/projects/${g.id}`;
+  const t = T[lang];
+  $("#p-how").innerHTML = `<h4>${esc(t.howTo)}</h4>
+    ${topicOf(g)?`<span class="topic">${esc(topicOf(g))}</span>`:""}
+    <p>${esc(howOf(g))}</p>
+    <div class="flag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5" fill="#4CBF4A" stroke="#2E7D32" stroke-width="1.6" stroke-linejoin="round"/></svg><span>${esc(t.flagTip)}</span></div>
+    ${g.by?`<p class="by" style="margin-top:12px">${esc(t.madeBy)} <b>${esc(g.by)}</b> · Scratch</p>`:""}`;
+  $("#p-frame").innerHTML = `<iframe src="https://scratch.mit.edu/projects/${g.id}/embed" title="${esc(titleOf(g))}" allowtransparency="true" allowfullscreen scrolling="no"></iframe>`;
+  player.hidden = false; document.body.style.overflow = "hidden"; $("#p-close").focus();
+}
+function closeGame(){
+  player.hidden = true; $("#p-frame").innerHTML = ""; document.body.style.overflow = "";
+  if(lastFocus) lastFocus.focus();
+}
+grid.addEventListener("click", e=>{ const b = e.target.closest("[data-play]"); if(b) openGame(+b.dataset.play); });
+$("#p-close").addEventListener("click", closeGame);
+player.addEventListener("click", e=>{ if(e.target===player) closeGame(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !player.hidden) closeGame(); });
+document.querySelectorAll(".lang button").forEach(b=>b.addEventListener("click",()=>applyLang(b.dataset.lang)));
+q.addEventListener("input", render);
+$("#stage").addEventListener("click", e=>{ const b=e.target.closest("[data-stage]"); if(b){ activeStage=+b.dataset.stage; drawCycle(); renderStage(); } });
+
+$("#count").textContent = GAMES.length;
+applyLang(lang);
+
+/* Fill in real titles/authors from Scratch when the browser allows it; keeps "Jogo NN" otherwise. */
+GAMES.forEach(g=>{
+  if(g.title && g.by) return;
+  fetch(`https://api.scratch.mit.edu/projects/${g.id}`).then(r=>r.ok?r.json():null).then(d=>{
+    if(!d) return;
+    if(!g.title && d.title) g.title = d.title;
+    if(!g.by && d.author && d.author.username) g.by = d.author.username;
+    clearTimeout(window.__rt); window.__rt = setTimeout(render,150);
+  }).catch(()=>{});
+});
+</script>
+</body>
+</html>
